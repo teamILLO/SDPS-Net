@@ -2,6 +2,8 @@ import os
 import torch
 import torch.nn as nn
 
+from .attention_augmented_conv import AugmentedConv
+
 def getInput(args, data):
     input_list = [data['img']]
     if args.in_light: input_list.append(data['dirs'])
@@ -79,6 +81,8 @@ def conv(batchNorm, cin, cout, k=3, stride=1, pad=-1):
     if batchNorm:
         print('=> convolutional layer with bachnorm')
         return nn.Sequential(
+                # torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, 
+                #                   dilation=1, groups=1, bias=True, padding_mode='zeros')
                 nn.Conv2d(cin, cout, kernel_size=k, stride=stride, padding=pad, bias=False),
                 nn.BatchNorm2d(cout),
                 nn.LeakyReLU(0.1, inplace=True)
@@ -86,6 +90,43 @@ def conv(batchNorm, cin, cout, k=3, stride=1, pad=-1):
     else:
         return nn.Sequential(
                 nn.Conv2d(cin, cout, kernel_size=k, stride=stride, padding=pad, bias=True),
+                nn.LeakyReLU(0.1, inplace=True)
+                )
+
+def resConv(batchNorm, in_channels, out_channels, k=3, stride=1, pad=-1):
+    #residual function
+    residual_function = nn.Sequential(
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
+        nn.BatchNorm2d(out_channels),
+        nn.ReLU(inplace=True),
+        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1, bias=False),
+        nn.BatchNorm2d(out_channels)
+    )
+
+    #shortcut
+    shortcut = nn.Sequential()
+
+    #the shortcut output dimension is not the same with residual function
+    #use 1*1 convolution to match the dimension
+    if stride != 1 or in_channels != out_channels:
+        shortcut = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
+            nn.BatchNorm2d(out_channels)
+        )
+    return {"residual" : residual_function, "shortcut" : shortcut}
+
+def augmented_conv(batchNorm, cin, cout, k=3, stride=1, pad=-1):
+    pad = pad if pad >= 0 else (k - 1) // 2
+    if batchNorm:
+        print('=> convolutional layer with bachnorm')
+        return nn.Sequential(
+                AugmentedConv(in_channels=cin, out_channels=cout, dk=cout//4, dv=cout//4, Nh=4, kernel_size=k, stride=stride),
+                nn.BatchNorm2d(cout),
+                nn.LeakyReLU(0.1, inplace=True)
+                )
+    else:
+        return nn.Sequential(
+                AugmentedConv(in_channels=cin, out_channels=cout, dk=cout//4, dv=cout//4, Nh=4, kernel_size=k, stride=stride),
                 nn.LeakyReLU(0.1, inplace=True)
                 )
 

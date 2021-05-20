@@ -8,22 +8,56 @@ from utils import eval_utils
 class FeatExtractor(nn.Module):
     def __init__(self, batchNorm, c_in, c_out=256):
         super(FeatExtractor, self).__init__()
-        self.conv1 = model_utils.conv(batchNorm, c_in, 64,    k=3, stride=2, pad=1)
-        self.conv2 = model_utils.conv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
-        self.conv3 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
-        self.conv4 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=2, pad=1)
-        self.conv5 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
-        self.conv6 = model_utils.conv(batchNorm, 128,  256,   k=3, stride=2, pad=1)
-        self.conv7 = model_utils.conv(batchNorm, 256,  256,   k=3, stride=1, pad=1)
+        # original LCNet
+        # self.conv1 = model_utils.conv(batchNorm, c_in, 64,    k=3, stride=2, pad=1)
+        # self.conv2 = model_utils.conv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
+        # self.conv3 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
+        # self.conv4 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=2, pad=1)
+        # self.conv5 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
+        # self.conv6 = model_utils.conv(batchNorm, 128,  256,   k=3, stride=2, pad=1)
+        # self.conv7 = model_utils.conv(batchNorm, 256,  256,   k=3, stride=1, pad=1)
 
+        # ResNet
+        self.conv1 = model_utils.conv(batchNorm, c_in, 64,    k=3, stride=2, pad=1)
+        self.conv2 = model_utils.resConv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
+        self.conv3 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
+        self.conv4 = model_utils.resConv(batchNorm, 128,  128,   k=3, stride=2, pad=1)
+        self.conv5 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
+        self.conv6 = model_utils.resConv(batchNorm, 128,  256,   k=3, stride=2, pad=1)
+        self.conv7 = model_utils.conv(batchNorm, 256,  256,   k=3, stride=1, pad=1)
+   
     def forward(self, inputs):
+        # out = self.conv1(inputs)
+        # out = self.conv2(out)
+        # out = self.conv3(out)
+        # out = self.conv4(out)
+        # out = self.conv5(out)
+        # out = self.conv6(out)
+        # out = self.conv7(out)
+
         out = self.conv1(inputs)
-        out = self.conv2(out)
+
+        tmp = self.conv2["shortcut"].cuda()(out)
+        out = self.conv2["residual"].cuda()(out)
+        out += tmp
+        out = nn.ReLU(inplace=True)(out)
+
         out = self.conv3(out)
-        out = self.conv4(out)
+
+        tmp = self.conv4["shortcut"].cuda()(out)
+        out = self.conv4["residual"].cuda()(out)
+        out += tmp
+        out = nn.ReLU(inplace=True)(out)
+
         out = self.conv5(out)
-        out = self.conv6(out)
+
+        tmp = self.conv6["shortcut"].cuda()(out)
+        out = self.conv6["residual"].cuda()(out)
+        out += tmp
+        out = nn.ReLU(inplace=True)(out)
+
         out = self.conv7(out)
+
         return out
 
 class Classifier(nn.Module):
