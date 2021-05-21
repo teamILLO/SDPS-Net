@@ -10,7 +10,6 @@ from . import ResNet
 class FeatExtractor(nn.Module):
     def __init__(self, batchNorm, c_in, c_out=256):
         super(FeatExtractor, self).__init__()
-        # original LCNet
         self.conv1 = model_utils.conv(batchNorm, c_in, 64,    k=3, stride=2, pad=1)
         self.conv2 = model_utils.conv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
         self.conv3 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
@@ -131,8 +130,12 @@ class LCNet(nn.Module):
         inputs = self.prepareInputs(x)
         feats = []
         for i in range(len(inputs)):
+            # original LCNet
             # out_feat = self.featExtractor(inputs[i])
-            out_feat = ResNet.resnet18()(inputs[i])
+
+            # ResNet-18
+            out_feat = ResNet.resnet18(ResNet.ResNet_FeatEx, [2,2,4])(inputs[i])
+            
             shape    = out_feat.data.shape
             feats.append(out_feat)
         feat_fused = self.fuseFeatures(feats, self.fuse_type)
@@ -140,7 +143,12 @@ class LCNet(nn.Module):
         l_dirs_x, l_dirs_y, l_ints = [], [], []
         for i in range(len(inputs)):
             net_input = torch.cat([feats[i], feat_fused], 1)
-            outputs = self.classifier(net_input)
+            # original LCNet
+            # outputs = self.classifier(net_input)
+
+            # ResNet-18
+            outputs = ResNet.resnet18(ResNet.ResNet_Classify, [1,3,4])(net_input)
+            
             if self.other['s1_est_d']:
                 l_dirs_x.append(outputs['dir_x'])
                 l_dirs_y.append(outputs['dir_y'])
