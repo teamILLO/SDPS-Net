@@ -144,10 +144,10 @@ class LCNet(nn.Module):
         for i in range(len(inputs)):
             net_input = torch.cat([feats[i], feat_fused], 1)
             # original LCNet
-            # outputs = self.classifier(net_input)
+            outputs = self.classifier(net_input)
 
             # ResNet-18
-            outputs = ResNet.resnet18(ResNet.ResNet_Classify, [1,3,4])(net_input)
+            # outputs = ResNet.resnet18(ResNet.ResNet_Classify, [1,3,4], self.other)(net_input)
             
             if self.other['s1_est_d']:
                 l_dirs_x.append(outputs['dir_x'])

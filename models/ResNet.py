@@ -6,6 +6,7 @@
 
 import torch
 import torch.nn as nn
+from . import model_utils
 
 class BasicBlock(nn.Module):
     """Basic Block for resnet 18 and resnet 34
@@ -79,12 +80,12 @@ class ResNet_FeatEx(nn.Module):
         self.in_channels = 64
 
         self.conv1 = nn.Sequential(
-            nn.Conv2d(4, 64, kernel_size=3, padding=1, bias=False),
+            nn.Conv2d(4, 64, kernel_size=3, padding=1, bias=False, stride=2),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True))
         #we use a different inputsize than the original paper
         #so conv2_x's stride is 1
-        self.conv2_x = self._make_layer(block, 64, num_block[0], 1)
+        self.conv2_x = self._make_layer(block, 64, num_block[0], 2)
         self.conv3_x = self._make_layer(block, 128, num_block[1], 2)
         self.conv4_x = self._make_layer(block, 256, num_block[2], 2)
         # self.conv5_x = self._make_layer(block, 512, num_block[3], 2)
@@ -115,10 +116,10 @@ class ResNet_FeatEx(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        output = self.conv1(x)
-        output = self.conv2_x(output)
-        output = self.conv3_x(output)
-        output = self.conv4_x(output)
+        output = self.conv1.cuda()(x)
+        output = self.conv2_x.cuda()(output)
+        output = self.conv3_x.cuda()(output)
+        output = self.conv4_x.cuda()(output)
         # output = self.conv5_x(output)
         # output = self.avg_pool(output)
         # output = output.view(output.size(0), -1)
@@ -128,10 +129,11 @@ class ResNet_FeatEx(nn.Module):
 
 class ResNet_Classify(nn.Module):
 
-    def __init__(self, block, num_block, num_classes=100):
+    def __init__(self, block, num_block, other, num_classes=100):
         super().__init__()
 
         self.in_channels = 256
+        self.other = other
 
         self.conv1 = nn.Sequential(
             nn.Conv2d(512, 256, kernel_size=3, padding=1, bias=False),
@@ -139,12 +141,24 @@ class ResNet_Classify(nn.Module):
             nn.ReLU(inplace=True))
         #we use a different inputsize than the original paper
         #so conv2_x's stride is 1
-        self.conv2_x = self._make_layer(block, 256, num_block[0], 1)
+        self.conv2_x = self._make_layer(block, 256, num_block[0], 2)
         self.conv3_x = self._make_layer(block, 256, num_block[1], 2)
         self.conv4_x = self._make_layer(block, 256, num_block[2], 2)
         # self.conv5_x = self._make_layer(block, 512, num_block[3], 2)
         # self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         # self.fc = nn.Linear(256 * block.expansion, num_classes)
+
+        self.dir_x_est = nn.Sequential(
+                    model_utils.conv(True, 256, 64,  k=1, stride=1, pad=0),
+                    model_utils.outputConv(64, other['dirs_cls'], k=1, stride=1, pad=0))
+
+        self.dir_y_est = nn.Sequential(
+                    model_utils.conv(True, 256, 64,  k=1, stride=1, pad=0),
+                    model_utils.outputConv(64, other['dirs_cls'], k=1, stride=1, pad=0))
+
+        self.int_est = nn.Sequential(
+                    model_utils.conv(True, 256, 64,  k=1, stride=1, pad=0),
+                    model_utils.outputConv(64, other['ints_cls'], k=1, stride=1, pad=0))
 
     def _make_layer(self, block, out_channels, num_blocks, stride):
         """make resnet layers(by layer i didnt mean this 'layer' was the
@@ -170,20 +184,27 @@ class ResNet_Classify(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        output = self.conv1(x)
-        output = self.conv2_x(output)
-        output = self.conv3_x(output)
-        output = self.conv4_x(output)
+        output = self.conv1.cuda()(x)
+        output = self.conv2_x.cuda()(output)
+        output = self.conv3_x.cuda()(output)
+        output = self.conv4_x.cuda()(output)
         # output = self.conv5_x(output)
         # output = self.avg_pool(output)
         # output = output.view(output.size(0), -1)
         # output = self.fc(output)
 
-        return output
+        outputs = {}
+        if self.other['s1_est_d']:
+            outputs['dir_x'] = self.dir_x_est.cuda()(output)
+            outputs['dir_y'] = self.dir_y_est.cuda()(output)
+        if self.other['s1_est_i']:
+            outputs['ints'] = self.int_est.cuda()(output)
+        return outputs
 
 # FeatEx : [2,2,4]
 # Classifier : [1,3,4]
 def resnet18(cls, num_block):
-    """ return a ResNet 18 object
+    """
+    return a ResNet 18 object
     """
     return cls(BasicBlock, num_block)
