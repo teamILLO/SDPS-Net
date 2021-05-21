@@ -4,58 +4,28 @@ from torch.nn.init import kaiming_normal_
 from . import model_utils
 from utils import eval_utils
 
+from . import ResNet
+
 # Classification
 class FeatExtractor(nn.Module):
     def __init__(self, batchNorm, c_in, c_out=256):
         super(FeatExtractor, self).__init__()
         # original LCNet
-        # self.conv1 = model_utils.conv(batchNorm, c_in, 64,    k=3, stride=2, pad=1)
-        # self.conv2 = model_utils.conv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
-        # self.conv3 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
-        # self.conv4 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=2, pad=1)
-        # self.conv5 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
-        # self.conv6 = model_utils.conv(batchNorm, 128,  256,   k=3, stride=2, pad=1)
-        # self.conv7 = model_utils.conv(batchNorm, 256,  256,   k=3, stride=1, pad=1)
-
-        # ResNet
         self.conv1 = model_utils.conv(batchNorm, c_in, 64,    k=3, stride=2, pad=1)
-        self.conv2 = model_utils.resConv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
+        self.conv2 = model_utils.conv(batchNorm, 64,   128,   k=3, stride=2, pad=1)
         self.conv3 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
-        self.conv4 = model_utils.resConv(batchNorm, 128,  128,   k=3, stride=2, pad=1)
+        self.conv4 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=2, pad=1)
         self.conv5 = model_utils.conv(batchNorm, 128,  128,   k=3, stride=1, pad=1)
-        self.conv6 = model_utils.resConv(batchNorm, 128,  256,   k=3, stride=2, pad=1)
+        self.conv6 = model_utils.conv(batchNorm, 128,  256,   k=3, stride=2, pad=1)
         self.conv7 = model_utils.conv(batchNorm, 256,  256,   k=3, stride=1, pad=1)
    
     def forward(self, inputs):
-        # out = self.conv1(inputs)
-        # out = self.conv2(out)
-        # out = self.conv3(out)
-        # out = self.conv4(out)
-        # out = self.conv5(out)
-        # out = self.conv6(out)
-        # out = self.conv7(out)
-
         out = self.conv1(inputs)
-
-        tmp = self.conv2["shortcut"].cuda()(out)
-        out = self.conv2["residual"].cuda()(out)
-        out += tmp
-        out = nn.ReLU(inplace=True)(out)
-
+        out = self.conv2(out)
         out = self.conv3(out)
-
-        tmp = self.conv4["shortcut"].cuda()(out)
-        out = self.conv4["residual"].cuda()(out)
-        out += tmp
-        out = nn.ReLU(inplace=True)(out)
-
+        out = self.conv4(out)
         out = self.conv5(out)
-
-        tmp = self.conv6["shortcut"].cuda()(out)
-        out = self.conv6["residual"].cuda()(out)
-        out += tmp
-        out = nn.ReLU(inplace=True)(out)
-
+        out = self.conv6(out)
         out = self.conv7(out)
 
         return out
@@ -97,7 +67,7 @@ class Classifier(nn.Module):
 class LCNet(nn.Module):
     def __init__(self, fuse_type='max', batchNorm=False, c_in=3, other={}):
         super(LCNet, self).__init__()
-        self.featExtractor = FeatExtractor(batchNorm, c_in, 128)
+        self.featExtractor = FeatExtractor(batchNorm, c_in, 256)
         self.classifier = Classifier(batchNorm, 256, other)
         self.c_in      = c_in
         self.fuse_type = fuse_type
@@ -161,7 +131,8 @@ class LCNet(nn.Module):
         inputs = self.prepareInputs(x)
         feats = []
         for i in range(len(inputs)):
-            out_feat = self.featExtractor(inputs[i])
+            # out_feat = self.featExtractor(inputs[i])
+            out_feat = ResNet.resnet18()(inputs[i])
             shape    = out_feat.data.shape
             feats.append(out_feat)
         feat_fused = self.fuseFeatures(feats, self.fuse_type)
