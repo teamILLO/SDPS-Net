@@ -4,7 +4,7 @@ from utils  import eval_utils, time_utils
 
 def train(args, loader, models, criterion, optimizers, log, epoch, recorder):
     models[1].train()
-    models[0].eval()
+    models[0].tarin() # 원래 eval finish?
     optimizer, optimizer_c = optimizers
     log.printWrite('---- Start Training Epoch %d: %d batches ----' % (epoch, len(loader)))
     timer = time_utils.Timer(args.time_sync);
