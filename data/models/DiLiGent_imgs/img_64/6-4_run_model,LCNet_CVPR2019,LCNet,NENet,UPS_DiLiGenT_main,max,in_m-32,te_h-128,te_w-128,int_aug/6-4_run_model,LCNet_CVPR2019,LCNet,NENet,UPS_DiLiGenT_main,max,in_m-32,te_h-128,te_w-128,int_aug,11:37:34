@@ -1,0 +1,94 @@
+------------ Options -------------
+	benchmark: UPS_DiLiGenT_main
+	bm_dir: data/datasets/DiLiGenT/pmsData_crop
+	bool_keys: ['int_aug', 'test_resc']
+	color_aug: True
+	color_ratio: 3
+	concat_data: True
+	crop: True
+	crop_h: 128
+	crop_w: 128
+	cuda: True
+	data_dir: data/datasets/PS_Blobby_Dataset
+	data_dir2: data/datasets/PS_Sculpture_Dataset
+	dataset: UPS_Synth_Dataset
+	debug: False
+	dir_int: False
+	dirs_cls: 36
+	epochs: 1
+	fuse_type: max
+	have_gt_n: False
+	have_l_dirs: False
+	have_l_ints: False
+	in_img_num: 32
+	in_light: False
+	in_mask: True
+	int_aug: True
+	ints_cls: 20
+	item: CVPR2019
+	l_suffix: _mtrl.txt
+	log: <utils.logger.Logger object at 0x7f170af3cb90>
+	log_dir: data/models/6-4_run_model,LCNet_CVPR2019,LCNet,NENet,UPS_DiLiGenT_main,max,in_m-32,te_h-128,te_w-128,int_aug
+	make_dir: True
+	max_test_iter: -1
+	max_train_iter: -1
+	max_val_iter: -1
+	model: LCNet
+	model_s2: NENet
+	multi_gpu: False
+	noise: 0.05
+	noise_aug: True
+	normalize: False
+	rand_sc: True
+	rescale: True
+	resume: None
+	retrain: data/models/LCNet_CVPR2019.pth.tar
+	retrain_s2: data/models/NENet_CVPR2019.pth.tar
+	run_model: True
+	s1_est_d: True
+	s1_est_i: True
+	s1_est_n: False
+	s2_est_d: False
+	s2_est_i: False
+	s2_est_n: True
+	s2_in_light: True
+	save_intv: 1
+	save_root: data/logdir/
+	save_split: False
+	scale_h: 128
+	scale_w: 128
+	seed: 0
+	stage2: True
+	str_keys: ['model', 'model_s2', 'benchmark', 'fuse_type']
+	suffix: None
+	test_batch: 1
+	test_disp: 1
+	test_h: 128
+	test_resc: False
+	test_save: 1
+	test_save_n: 4
+	test_w: 128
+	time_sync: False
+	train_disp: 20
+	train_save: 200
+	train_save_n: 4
+	use_BN: False
+	val_disp: 1
+	val_intv: 1
+	val_keys: ['in_img_num', 'test_h', 'test_w']
+	val_save: 1
+	workers: 8
+-------------- End ----------------
+
+=> fetching img pairs in 'data/UPS_DiLiGenT_main'
+[test Data] 	10 objs 96 lights. Root: data/datasets/DiLiGenT/pmsData_crop
+Found Benchmark Data: 10 samples
+	 Test Batch 1
+[Network Input] Color image as input
+[Network Input] Adding Mask as input
+[Network Input] Input channel: 4
+=> using pre-trained model 'data/models/LCNet_CVPR2019.pth.tar'
+=> Model Parameters: 4409692
+=> using pre-trained model_s2 'data/models/NENet_CVPR2019.pth.tar'
+=> Stage2 Model Parameters: 2210048
+---- Start test Epoch 1: 10 batches ----

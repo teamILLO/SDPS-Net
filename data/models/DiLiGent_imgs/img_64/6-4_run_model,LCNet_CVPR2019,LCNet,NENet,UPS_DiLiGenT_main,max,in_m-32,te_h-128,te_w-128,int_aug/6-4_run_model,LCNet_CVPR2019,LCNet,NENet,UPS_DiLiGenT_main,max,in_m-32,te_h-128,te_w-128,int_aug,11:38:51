@@ -1,0 +1,159 @@
+------------ Options -------------
+	benchmark: UPS_DiLiGenT_main
+	bm_dir: data/datasets/DiLiGenT/pmsData_crop
+	bool_keys: ['int_aug', 'test_resc']
+	color_aug: True
+	color_ratio: 3
+	concat_data: True
+	crop: True
+	crop_h: 128
+	crop_w: 128
+	cuda: True
+	data_dir: data/datasets/PS_Blobby_Dataset
+	data_dir2: data/datasets/PS_Sculpture_Dataset
+	dataset: UPS_Synth_Dataset
+	debug: False
+	dir_int: False
+	dirs_cls: 36
+	epochs: 1
+	fuse_type: max
+	have_gt_n: False
+	have_l_dirs: False
+	have_l_ints: False
+	in_img_num: 32
+	in_light: False
+	in_mask: True
+	int_aug: True
+	ints_cls: 20
+	item: CVPR2019
+	l_suffix: _mtrl.txt
+	log: <utils.logger.Logger object at 0x7fdba8669c10>
+	log_dir: data/models/6-4_run_model,LCNet_CVPR2019,LCNet,NENet,UPS_DiLiGenT_main,max,in_m-32,te_h-128,te_w-128,int_aug
+	make_dir: True
+	max_test_iter: -1
+	max_train_iter: -1
+	max_val_iter: -1
+	model: LCNet
+	model_s2: NENet
+	multi_gpu: False
+	noise: 0.05
+	noise_aug: True
+	normalize: False
+	rand_sc: True
+	rescale: True
+	resume: None
+	retrain: data/models/LCNet_CVPR2019.pth.tar
+	retrain_s2: data/models/NENet_CVPR2019.pth.tar
+	run_model: True
+	s1_est_d: True
+	s1_est_i: True
+	s1_est_n: False
+	s2_est_d: False
+	s2_est_i: False
+	s2_est_n: True
+	s2_in_light: True
+	save_intv: 1
+	save_root: data/logdir/
+	save_split: False
+	scale_h: 128
+	scale_w: 128
+	seed: 0
+	stage2: True
+	str_keys: ['model', 'model_s2', 'benchmark', 'fuse_type']
+	suffix: None
+	test_batch: 1
+	test_disp: 1
+	test_h: 128
+	test_resc: False
+	test_save: 1
+	test_save_n: 4
+	test_w: 128
+	time_sync: False
+	train_disp: 20
+	train_save: 200
+	train_save_n: 4
+	use_BN: False
+	val_disp: 1
+	val_intv: 1
+	val_keys: ['in_img_num', 'test_h', 'test_w']
+	val_save: 1
+	workers: 8
+-------------- End ----------------
+
+=> fetching img pairs in 'data/UPS_DiLiGenT_main'
+[test Data] 	10 objs 96 lights. Root: data/datasets/DiLiGenT/pmsData_crop
+Found Benchmark Data: 10 samples
+	 Test Batch 1
+[Network Input] Color image as input
+[Network Input] Adding Mask as input
+[Network Input] Input channel: 4
+=> using pre-trained model 'data/models/LCNet_CVPR2019.pth.tar'
+=> Model Parameters: 4409692
+=> using pre-trained model_s2 'data/models/NENet_CVPR2019.pth.tar'
+=> Stage2 Model Parameters: 2210048
+---- Start test Epoch 1: 10 batches ----
+ | TEST Iter [1/10] Epoch [1/1]
+	 [Time 4.721s] ToCPU: 1.376s| ToGPU: 0.004s| Forward: 2.476s| 
+	 [ACC] n_acc_11: 1.000| n_acc_30: 1.000| n_acc_45: 1.000| 
+	 [ERR] l_err_mean: 3.271| n_err_mean: 2.765| 
+	 [RATIO] ints_ratio: 0.039| 
+
+ | TEST Iter [2/10] Epoch [1/1]
+	 [Time 2.350s] ToCPU: 1.544s| ToGPU: 0.010s| Forward: 0.545s| 
+	 [ACC] n_acc_11: 0.787| n_acc_30: 0.990| n_acc_45: 0.999| 
+	 [ERR] l_err_mean: 4.077| n_err_mean: 8.060| 
+	 [RATIO] ints_ratio: 0.095| 
+
+ | TEST Iter [3/10] Epoch [1/1]
+	 [Time 2.032s] ToCPU: 1.223s| ToGPU: 0.011s| Forward: 0.519s| 
+	 [ACC] n_acc_11: 0.806| n_acc_30: 0.982| n_acc_45: 0.996| 
+	 [ERR] l_err_mean: 5.436| n_err_mean: 8.141| 
+	 [RATIO] ints_ratio: 0.058| 
+
+ | TEST Iter [4/10] Epoch [1/1]
+	 [Time 2.124s] ToCPU: 1.474s| ToGPU: 0.007s| Forward: 0.472s| 
+	 [ACC] n_acc_11: 0.830| n_acc_30: 0.998| n_acc_45: 1.000| 
+	 [ERR] l_err_mean: 3.471| n_err_mean: 6.892| 
+	 [RATIO] ints_ratio: 0.061| 
+
+ | TEST Iter [5/10] Epoch [1/1]
+	 [Time 2.140s] ToCPU: 1.470s| ToGPU: 0.008s| Forward: 0.435s| 
+	 [ACC] n_acc_11: 0.847| n_acc_30: 0.984| n_acc_45: 0.995| 
+	 [ERR] l_err_mean: 2.866| n_err_mean: 7.499| 
+	 [RATIO] ints_ratio: 0.048| 
+
+ | TEST Iter [6/10] Epoch [1/1]
+	 [Time 2.185s] ToCPU: 1.501s| ToGPU: 0.007s| Forward: 0.494s| 
+	 [ACC] n_acc_11: 0.760| n_acc_30: 0.964| n_acc_45: 0.990| 
+	 [ERR] l_err_mean: 4.344| n_err_mean: 8.975| 
+	 [RATIO] ints_ratio: 0.048| 
+
+ | TEST Iter [7/10] Epoch [1/1]
+	 [Time 2.192s] ToCPU: 1.360s| ToGPU: 0.009s| Forward: 0.542s| 
+	 [ACC] n_acc_11: 0.577| n_acc_30: 0.970| n_acc_45: 0.991| 
+	 [ERR] l_err_mean: 10.357| n_err_mean: 11.910| 
+	 [RATIO] ints_ratio: 0.067| 
+
+ | TEST Iter [8/10] Epoch [1/1]
+	 [Time 2.048s] ToCPU: 1.490s| ToGPU: 0.006s| Forward: 0.376s| 
+	 [ACC] n_acc_11: 0.487| n_acc_30: 0.888| n_acc_45: 0.971| 
+	 [ERR] l_err_mean: 4.501| n_err_mean: 14.905| 
+	 [RATIO] ints_ratio: 0.105| 
+
+ | TEST Iter [9/10] Epoch [1/1]
+	 [Time 1.835s] ToCPU: 1.294s| ToGPU: 0.005s| Forward: 0.410s| 
+	 [ACC] n_acc_11: 0.761| n_acc_30: 0.988| n_acc_45: 0.999| 
+	 [ERR] l_err_mean: 4.516| n_err_mean: 8.480| 
+	 [RATIO] ints_ratio: 0.073| 
+
+ | TEST Iter [10/10] Epoch [1/1]
+	 [Time 2.732s] ToCPU: 2.079s| ToGPU: 0.009s| Forward: 0.455s| 
+	 [ACC] n_acc_11: 0.484| n_acc_30: 0.828| n_acc_45: 0.921| 
+	 [ERR] l_err_mean: 6.322| n_err_mean: 17.430| 
+	 [RATIO] ints_ratio: 0.082| 
+
+---------- TEST Epoch 1 Summary -----------
+	 [ACC] n_acc_11: 0.734| n_acc_30: 0.959| n_acc_45: 0.986| 
+	 [ERR] l_err_mean: 4.916| n_err_mean: 9.506| 
+	 [RATIO] ints_ratio: 0.068| 
+
