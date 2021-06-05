@@ -71,7 +71,9 @@ def randomNoiseAug(inputs, noise_level=0.05):
     return inputs
 
 def getIntensity(num):
+    # normalize intensity [0.2, 2.0)
     intensity = np.random.random((num, 1)) * 1.8 + 0.2
     color = np.ones((1, 3)) # Uniform color
+    # exec inner product
     intens = (intensity.repeat(3, 1) * color)
     return intens
