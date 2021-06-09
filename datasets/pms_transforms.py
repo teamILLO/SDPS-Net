@@ -71,8 +71,25 @@ def randomNoiseAug(inputs, noise_level=0.05):
     return inputs
 
 def getIntensity(num):
-    # normalize intensity [0.2, 2.0)
+    # default : normalize intensity [0.2, 2.0)
     intensity = np.random.random((num, 1)) * 1.8 + 0.2
+
+    # modify 1 : normalize intensity [1, 2.0)
+    # intensity = np.random.random((num, 1)) + 1
+    ##
+
+    # modify 2 : uniform int select with units
+    units = 4
+    integrity = np.random.random((num//units, 1)) * (1.8 / units) + 0.2
+
+    for i in range(2, units) :
+        ints_unit = np.random.random((num//units, 1)) * (1.8 / units) + 0.2 + (1.8 * i / 4)
+        integrity = np.concatenate((integrity, ints_unit), axis = 0)
+
+    ints_unit = np.random.random((num - (num // units * (units-1)), 1)) * 1.8 + 0.2
+    integrity = np.concatenate((integrity, ints_unit), axis = 0)
+    ##
+
     color = np.ones((1, 3)) # Uniform color
     # exec inner product
     intens = (intensity.repeat(3, 1) * color)
