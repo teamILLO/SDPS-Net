@@ -9,8 +9,8 @@ class BaseOpts(object):
     def initialize(self):
         #### Trainining Dataset ####
         self.parser.add_argument('--dataset',     default='UPS_Synth_Dataset')
-        self.parser.add_argument('--data_dir',    default='data/datasets/PS_Blobby_Dataset')
-        self.parser.add_argument('--data_dir2',   default='data/datasets/PS_Sculpture_Dataset')
+        self.parser.add_argument('--data_dir',    default='/home/snu21ss/d/SDPS-Net/data/datasets/PS_Blobby_Dataset')
+        self.parser.add_argument('--data_dir2',   default='/home/snu21ss/d/SDPS-Net/data/datasets/PS_Sculpture_Dataset')
         self.parser.add_argument('--concat_data', default=True, action='store_false')
         self.parser.add_argument('--l_suffix',    default='_mtrl.txt')
 
